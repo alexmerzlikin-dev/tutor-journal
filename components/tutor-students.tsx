@@ -10,6 +10,10 @@ export const TutorStudents = () => {
   const { students, deleteStudentByEmail } = useTutorStore();
   const { data: session } = useSession();
 
+  if (session?.user.role !== "tutor") {
+    return null;
+  }
+
   return (
     <Card className="w-full md:w-[320px] h-max">
       <CardHeader>

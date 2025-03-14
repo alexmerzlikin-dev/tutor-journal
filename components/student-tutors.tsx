@@ -2,9 +2,16 @@
 import { useStudentStore } from "@/store/student";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { useSession } from "next-auth/react";
 
 export const StudentTutors = () => {
   const { tutors } = useStudentStore();
+  const { data: sesssion } = useSession();
+
+  if (sesssion?.user.role !== "student") {
+    return null;
+  }
+
   return (
     <Card className="w-full md:w-[320px] h-max">
       <CardHeader>

@@ -14,7 +14,7 @@ export const Lessons = () => {
         mode="single"
         selected={date}
         onSelect={setDate}
-        className="rounded-md border"
+        className="rounded-xl border max-h-[345px] shadow"
       />
 
       <NewLessonForm lessonDate={date || new Date()} />

@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 
 import { useLessonsStore } from "@/store/lessons";
+import { Trash as TrashIcon } from "lucide-react";
 
 import {
   Card,
@@ -10,8 +11,11 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useTutorStore } from "@/store/tutor";
+import { useStudentStore } from "@/store/student";
 
 interface Props {
   date: Date;
@@ -19,21 +23,34 @@ interface Props {
 
 export function ListOfLessons({ date }: Props) {
   const { data: session } = useSession();
-  const { lessons, getLessons } = useLessonsStore();
+  const { lessons, getLessons, deleteLessonById } = useLessonsStore();
   const { students } = useTutorStore();
+  const { tutors } = useStudentStore();
+
+  const query = {
+    date,
+    userId: session?.user.id || "",
+    role: session?.user.role || "",
+  };
 
   useEffect(() => {
-    const query = {
-      date,
-      userId: session?.user.id || "",
-      role: session?.user.role || "",
-    };
     getLessons(query);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [date]);
 
+  async function handleDelete(id: string) {
+    await deleteLessonById(id);
+    await getLessons(query);
+  }
+
   return (
     <Card className="p-4 w-[340px] max-h-[600px] flex flex-col gap-2 overflow-y-auto">
+      <CardHeader>
+        <CardTitle>
+          Ваши занятия на {date.getDate()}.{date.getMonth()}.
+          {date.getFullYear()}
+        </CardTitle>
+      </CardHeader>
       {lessons.length ? (
         lessons.map((lesson) => {
           return (
@@ -41,15 +58,26 @@ export function ListOfLessons({ date }: Props) {
               <CardHeader>
                 <CardTitle>{lesson.topic}</CardTitle>
                 <CardDescription>Предмет: {lesson.subject}</CardDescription>
-                {students.map((student) => {
-                  if (student.id === lesson.studentId) {
-                    return (
-                      <CardDescription key={student.id}>
-                        Ученик: {student.user.realName}
-                      </CardDescription>
-                    );
-                  }
-                })}
+                {session?.user.role === "tutor" &&
+                  students.map((student) => {
+                    if (student.id === lesson.studentId) {
+                      return (
+                        <CardDescription key={student.id}>
+                          Ученик: {student.user.realName}
+                        </CardDescription>
+                      );
+                    }
+                  })}
+                {session?.user.role === "student" &&
+                  tutors.map((tutor) => {
+                    if (tutor.id === lesson.tutorId) {
+                      return (
+                        <CardDescription key={tutor.id}>
+                          Репетитор: {tutor.user.realName}
+                        </CardDescription>
+                      );
+                    }
+                  })}
               </CardHeader>
               <CardContent>
                 <CardDescription>
@@ -57,6 +85,18 @@ export function ListOfLessons({ date }: Props) {
                 </CardDescription>
                 <CardDescription></CardDescription>
               </CardContent>
+              {session?.user.role === 'tutor' && (
+                <CardFooter className="flex flex-col gap-2">
+                  <Button
+                    onClick={() => handleDelete(lesson.id)}
+                    size="icon"
+                    variant="destructive"
+                    className="self-end"
+                  >
+                    <TrashIcon />
+                  </Button>
+                </CardFooter>
+              )}
             </Card>
           );
         })

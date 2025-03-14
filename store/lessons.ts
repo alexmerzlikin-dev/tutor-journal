@@ -48,18 +48,10 @@ export const useLessonsStore = create<StoreState>((set) => ({
     });
   },
   deleteLessonById: async (lessonId) => {
-    await fetch("/api/users/tutor/lessons", {
+    await fetch("/api/lessons", {
       method: "DELETE",
       body: JSON.stringify({ lessonId }),
     });
-    const res = await fetch(`/api/users/tutor/lessons`, {
-      method: "GET",
-    });
-    const lessons = await res.json();
-
-    set(() => ({
-      lessons,
-    }));
   },
   putLessonById: async (lesson) => {
     await fetch("/api/users/tutor/lessons", {
