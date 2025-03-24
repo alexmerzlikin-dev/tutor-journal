@@ -1,6 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 import { useLessonsStore } from "@/store/lessons";
 import { Trash as TrashIcon } from "lucide-react";
@@ -54,50 +55,52 @@ export function ListOfLessons({ date }: Props) {
       {lessons.length ? (
         lessons.map((lesson) => {
           return (
-            <Card key={lesson.id}>
-              <CardHeader>
-                <CardTitle>{lesson.topic}</CardTitle>
-                <CardDescription>Предмет: {lesson.subject}</CardDescription>
-                {session?.user.role === "tutor" &&
-                  students.map((student) => {
-                    if (student.id === lesson.studentId) {
-                      return (
-                        <CardDescription key={student.id}>
-                          Ученик: {student.user.realName}
-                        </CardDescription>
-                      );
-                    }
-                  })}
-                {session?.user.role === "student" &&
-                  tutors.map((tutor) => {
-                    if (tutor.id === lesson.tutorId) {
-                      return (
-                        <CardDescription key={tutor.id}>
-                          Репетитор: {tutor.user.realName}
-                        </CardDescription>
-                      );
-                    }
-                  })}
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  Время проведения: {lesson.startTime} - {lesson.endTime}
-                </CardDescription>
-                <CardDescription></CardDescription>
-              </CardContent>
-              {session?.user.role === 'tutor' && (
-                <CardFooter className="flex flex-col gap-2">
-                  <Button
-                    onClick={() => handleDelete(lesson.id)}
-                    size="icon"
-                    variant="destructive"
-                    className="self-end"
-                  >
-                    <TrashIcon />
-                  </Button>
-                </CardFooter>
-              )}
-            </Card>
+            <Link key={lesson.id} href={`/journal/lessons/${lesson.id}`}>
+              <Card className="hover:border-6">
+                <CardHeader>
+                  <CardTitle>{lesson.topic}</CardTitle>
+                  <CardDescription>Предмет: {lesson.subject}</CardDescription>
+                  {session?.user.role === "tutor" &&
+                    students.map((student) => {
+                      if (student.id === lesson.studentId) {
+                        return (
+                          <CardDescription key={student.id}>
+                            Ученик: {student.user.realName}
+                          </CardDescription>
+                        );
+                      }
+                    })}
+                  {session?.user.role === "student" &&
+                    tutors.map((tutor) => {
+                      if (tutor.id === lesson.tutorId) {
+                        return (
+                          <CardDescription key={tutor.id}>
+                            Репетитор: {tutor.user.realName}
+                          </CardDescription>
+                        );
+                      }
+                    })}
+                </CardHeader>
+                <CardContent>
+                  <CardDescription>
+                    Время проведения: {lesson.startTime} - {lesson.endTime}
+                  </CardDescription>
+                  <CardDescription></CardDescription>
+                </CardContent>
+                {session?.user.role === "tutor" && (
+                  <CardFooter className="flex flex-col gap-2">
+                    <Button
+                      onClick={() => handleDelete(lesson.id)}
+                      size="icon"
+                      variant="destructive"
+                      className="self-end"
+                    >
+                      <TrashIcon />
+                    </Button>
+                  </CardFooter>
+                )}
+              </Card>
+            </Link>
           );
         })
       ) : (
