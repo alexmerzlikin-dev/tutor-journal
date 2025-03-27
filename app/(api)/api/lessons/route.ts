@@ -32,6 +32,13 @@ export async function GET(req: Request) {
             lte: endDay,
           },
         },
+        include: {
+          comments: {
+            include: {
+              user: { select: { email: true, realName: true, image: true } },
+            },
+          },
+        },
       });
 
       if (!lessons) {
@@ -62,6 +69,13 @@ export async function GET(req: Request) {
           date: {
             gte: startDay,
             lte: endDay,
+          },
+        },
+        include: {
+          comments: {
+            include: {
+              user: { select: { email: true, realName: true, image: true } },
+            },
           },
         },
       });

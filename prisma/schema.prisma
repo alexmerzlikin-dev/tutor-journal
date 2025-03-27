@@ -57,9 +57,10 @@ model User {
   accounts      Account[]
   sessions      Session[]
 
-  // Связь с таблицами Student и Tutor
   student Student?
   tutor   Tutor?
+
+  comments Comment[]
 
   @@map("users")
 }
@@ -105,8 +106,20 @@ model Lesson {
   status    String   @default("planned")
   createdAt DateTime @default(now())
 
-  tutor   Tutor   @relation(fields: [tutorId], references: [id], onDelete: Cascade)
-  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  tutor   Tutor     @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  student Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  
+  comments Comment[]
 
   @@map("lessons")
+}
+
+model Comment {
+  id       String @id @default(cuid())
+  lessonId String
+  userId   String
+  message  String
+
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

@@ -9,6 +9,7 @@ import {
 
 import Providers from "@/providers";
 import "@/assets/globals.css";
+import { Version } from "@/components/version";
 
 const geistSans = localFont({
   src: "../../assets/fonts/GeistVF.woff",
@@ -46,8 +47,9 @@ export default function RootLayout({
                   <SidebarTrigger className="-ml-1" />
                 </div>
               </header>
-              <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+              <div className="flex flex-1 flex-col gap-4 p-4 pt-0 relative">
                 {children}
+                <Version />
               </div>
             </SidebarInset>
           </SidebarProvider>
